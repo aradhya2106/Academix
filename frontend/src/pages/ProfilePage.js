@@ -78,8 +78,13 @@ const ProfilePage = () => {
 
     useEffect(() => {
         if (user) {
-            fetchClassrooms();
-            fetchClassroomsJoinedByMe()
+            if (user.role === 'teacher') {
+                // Teachers only fetch their created classrooms
+                fetchClassrooms();
+            } else {
+                // Students only fetch their enrolled classrooms
+                fetchClassroomsJoinedByMe();
+            }
         }
     }, [user]);
 
@@ -174,8 +179,8 @@ const ProfilePage = () => {
                         )}
 
 
-                        {
-                            user.role == 'teacher' &&
+                        {user.role === 'teacher' ? (
+                            /* Teachers only see their created classrooms */
                             <div className="classroom-list">
                                 <h3>Classrooms created by me</h3>
                                 <table>
@@ -195,29 +200,28 @@ const ProfilePage = () => {
                                     </tbody>
                                 </table>
                             </div>
-
-
-                        }
-
-                        <div className="classroom-list">
-                            <h3>Classrooms joined by me</h3>
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Description</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {classroomsJoinedByMe.map(classroom => (
-                                        <tr key={classroom._id} onClick={() => handleRowClick(classroom._id)} className="clickable-row">
-                                            <td>{classroom.name}</td>
-                                            <td>{classroom.description}</td>
+                        ) : (
+                            /* Students only see their enrolled classrooms */
+                            <div className="classroom-list">
+                                <h3>Classrooms joined by me</h3>
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Description</th>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
+                                    </thead>
+                                    <tbody>
+                                        {classroomsJoinedByMe.map(classroom => (
+                                            <tr key={classroom._id} onClick={() => handleRowClick(classroom._id)} className="clickable-row">
+                                                <td>{classroom.name}</td>
+                                                <td>{classroom.description}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        )}
                     </>
                 )
                     : (

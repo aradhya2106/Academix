@@ -15,6 +15,11 @@ const ClassroomSchema = new mongoose.Schema({
         type: String,
         trim: true,
     },
+    joinCode: {
+        type: String,
+        unique: true,
+        required: true,
+    },
     students: [String],
     posts: [{
         type: mongoose.Schema.Types.ObjectId,

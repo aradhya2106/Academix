@@ -68,6 +68,23 @@
     height: 24px;
 }
 
+/* Join Classroom button styling */
+.join-classroom-btn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    margin-right: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.join-classroom-btn:hover {
+    background-color: #45a049;
+    color: white;
+}
+
 /* Logout button styling */
 .logout-btn {
     background-color: transparent;

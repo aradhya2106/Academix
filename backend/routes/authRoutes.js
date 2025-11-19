@@ -48,22 +48,18 @@ router.get('/', (req, res) => {
 router.post('/sendotp', async (req, res, next) => {
     const { email } = req.body;
     if (!email) {
-        return res.status(400).json({ message: "Email is required", success: false });
+        return responseFunction(res, 400, "Email is required", null, false)
     }
 
     try {
         await Verification.deleteMany({ email: email })
-        const code = Math.floor(100000 + Math.random() * 900000);//to generate a 6 digit random number
+        const code = Math.floor(100000 + Math.random() * 900000);
         const isSent = await mailer(email, code);
-
-        if (!isSent) {
-            return res.status(500).json({ message: "Failed to send OTP", success: false });
-        }
 
         const newVerification = new Verification({
             email: email,
             code: code
-        });
+        })
 
         await newVerification.save();
         if (!isSent) {
@@ -198,6 +194,37 @@ router.get('/logout', authTokenHandler, async (req, res, next) => {
         ok: true,
         message: 'Logged out successfully'
     })
+})
+
+// Reset password via OTP (email, otp, newPassword)
+router.post('/reset-password', async (req, res) => {
+    try {
+        const { email, otp, newPassword } = req.body;
+        if (!email || !otp || !newPassword) {
+            return responseFunction(res, 400, 'Email, OTP and new password are required', null, false);
+        }
+        if (newPassword.length < 6) {
+            return responseFunction(res, 400, 'Password should be at least 6 characters long', null, false);
+        }
+        const user = await User.findOne({ email });
+        if (!user) {
+            return responseFunction(res, 404, 'User not found', null, false);
+        }
+        const verification = await Verification.findOne({ email });
+        if (!verification) {
+            return responseFunction(res, 400, 'Please request OTP first', null, false);
+        }
+        const isMatch = await bcrypt.compare(otp, verification.code);
+        if (!isMatch) {
+            return responseFunction(res, 400, 'Invalid OTP', null, false);
+        }
+        user.password = newPassword;
+        await user.save();
+        await Verification.deleteOne({ email });
+        return responseFunction(res, 200, 'Password reset successfully', null, true);
+    } catch (err) {
+        return responseFunction(res, 500, 'Internal server error', err, false);
+    }
 })
 
 module.exports = router;

@@ -70,6 +70,7 @@ const Login = () => {
             </form>
             <div className="signup-link">
                 <p>Don't have an account? <Link to="/signup">Sign up</Link></p>
+                <p><Link to="/forgot">Forgot password?</Link></p>
             </div>
         </div>
     )

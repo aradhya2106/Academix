@@ -11,6 +11,8 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ProfilePage from './pages/ProfilePage';
 import ClassesDetails from './pages/ClassesDetails';
+import ForgotPassword from './pages/ForgotPassword';
+import JoinClassroom from './pages/JoinClassroom';
 
 const ProtectedRoute = ({ children }) => {
   const { auth, login } = useAuth();
@@ -61,6 +63,7 @@ const App = () => {
         <Navbar />
         <Routes>
           <Route path="/login" element={<Login />} />
+          <Route path="/forgot" element={<ForgotPassword />} />
           <Route path="/signup" element={<Signup />} />
           <Route
             path="/"
@@ -83,6 +86,14 @@ const App = () => {
             element={
               <ProtectedRoute>
                 <ClassesDetails />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/join"
+            element={
+              <ProtectedRoute>
+                <JoinClassroom />
               </ProtectedRoute>
             }
           />
